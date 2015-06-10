@@ -54,7 +54,7 @@ app.factory('loremSvc', function (wordBank) {
     var generateSentence = function () {
         var sentence, lastIdx, currentIdx,
             words = [],
-            size = chance.natural({min: 1, max:13});
+            size = chance.natural({min: 7, max:13});
 
         // push random words
         while(size--) {
@@ -67,7 +67,7 @@ app.factory('loremSvc', function (wordBank) {
     var generateParagraph = function () {
         var sentences = [],
             paragraph,
-            limit = chance.natural({min: 3, max: 9});
+            limit = chance.natural({min: 4, max: 7});
 
         while(limit--) {
             sentences.push(generateSentence());
