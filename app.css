@@ -1,0 +1,14 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:700,400|Roboto:700,400|Roboto+Mono:400,700);
+html, body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Slab', serif;
+}
+
+.ipsum {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}

@@ -1,231 +1,140 @@
+/*
+ * Mimics Ruby `Array#sample` to return a random item from the array.
+ */
+Array.prototype.sample = function () {
+    if (this.length > 0) {
+        return this[Math.floor(Math.random() * this.length)];
+    } else {
+        return null;
+    }
+};
+
 var app = angular.module('agileipsum', ['ngInflection']);
 
-app.controller('loremCtrl', function ($scope, loremSvc) {
-    $scope.numParagraphs = 1;
-    $scope.paragraphs = [];
+app.controller('loremCtrl', function ($scope, $http, Lorem) {
+    var lorem;
+    $scope.ready = false;
+    $scope.vocabulary = 'agile';
+    $scope.vocabs = [
+        'agile',
+        'bangbiz'
+    ];
+
+    // TEST
+    var tmpl = "NOUN: {{noun}}, VERB: {{verb}}";
+    var scp = {
+        noun: "Ryan",
+        verb: "rocks"
+    };
+    var scp2 = {
+      get noun() {
+        return "NOUN";
+      },
+      get verb() {
+        return "HERRO";
+      }
+    };
+    $scope.compiled = Handlebars.compile(tmpl)(scp2);
+    //END:TEST
+
+    var reset = function () {
+        $scope.numParagraphs = 1;
+        $scope.paragraphs = [];
+    };
+
+    $scope.$watch('vocabulary', function (newVal) {
+        var file = 'vocab-' + newVal + '.json';
+        $http.get(file)
+            .success(function (response) {
+                reset();
+                lorem = new Lorem(response);
+                $scope.ready = true;
+            })
+            .error(function () {
+                $scope.ready = false;
+                // TODO: display error message on page
+                console.error('Could not load vocabulary: ', file);
+            });
+    });
 
     $scope.generateIpsum = function () {
-        $scope.paragraphs = loremSvc.paragraphs($scope.numParagraphs);
+        if ($scope.ready) {
+            $scope.paragraphs = lorem.paragraphs($scope.numParagraphs);
+
+            $scope.phrase = lorem.phrase();
+        }
+
     };
+
+    reset();
 });
 
-app.factory('wordBank', function (words) {
-    return function () {
-        var self = this;
-        var _lastIdx;
-
-        var _data = words.nouns;
-        _data.isEmpty = function () {
-            return this.length > 0 ? false : true;
+/**
+ * @param {Object.noun} vocabulary - object to instantiate Lorem instance.
+ * @return {Function} constructor function for new Lorem object
+ */
+app.service('Lorem', function ($filter) {
+    return function (vocab) {
+        var VocabGenerator = {
+            get noun() { return vocab.noun.sample(); },
+            get verb() { return vocab.verb.sample(); },
+            get adjective() { return vocab.adjective.sample(); },
+            get adverb() { return vocab.adverb.sample(); },
+            get abbreviation() { return vocab.abbreviation.sample(); },
+            get ingverb() { return vocab.ingverb.sample(); },
+            get preposition() { return vocab.preposition.sample(); }
         };
 
-        var _randomIdx = function () {
-            if (_data.isEmpty()) {
-                return 0;
-            } else {
-                return chance.natural({
-                    min: 0,
-                    max: (_data.length - 1)
-                });
-            }
-        };//_randomIdx
-
-        self.randomWord = function () {
-            var out;
-            if (_data.isEmpty()) {
-                return '';
-            } else {
-                var idx = _randomIdx();
-                while(idx === _lastIdx) {
-                    idx = _randomIdx();
-                }
-                out = _data[idx];
-                _lastIdx = idx;
-                return out;
-            }
+        var _phrase = function () {
+            var phrase = Handlebars.compile(vocab.phrase.sample())(VocabGenerator);
+            // Ensure first letter is capitalized
+            phrase = phrase.replace(/^[a-z]/, function (c) { return c.toUpperCase(); });
+            return phrase;
         };
-    };
-});//wordBank
 
-app.factory('loremSvc', function (wordBank) {
-    var svc = {};
-    var bank = new wordBank();
+        var _paragraph = function () {
+            var phrases = [],
+                paragraph,
+                limit = chance.natural({min: 4, max: 6});
 
-    var generateSentence = function () {
-        var sentence, lastIdx, currentIdx,
-            words = [],
-            size = chance.natural({min: 7, max:13});
+            while(limit--) {
+                phrases.push(_phrase());
+            }
 
-        // push random words
-        while(size--) {
-            words.push(bank.randomWord());
-        }
-        sentence = words.join(' ');
-        return sentence + '.';
-    };//generateSentence
+            paragraph = phrases.join(' ');
 
-    var generateParagraph = function () {
-        var sentences = [],
-            paragraph,
-            limit = chance.natural({min: 4, max: 7});
+            return paragraph
+        };//_paragraph
 
-        while(limit--) {
-            sentences.push(generateSentence());
-        }
-
-        paragraph = sentences.join(' ');
-
-        return paragraph
-    };//generateParagraph
-
-    return {
-        paragraphs: function (count) {
+        var generateParagraphs = function (count) {
             var paragraphs = [];
             count = count || 0;
             while(count--) {
-                paragraphs.push(generateParagraph());
+                paragraphs.push(_paragraph());
             }
             return paragraphs;
+        };
+
+        return {
+            paragraphs: generateParagraphs,
+            phrase: _phrase
+        };
+    };
+});
+
+/**
+ * Attribute directive to be placed on an HTML element whose text you want
+ * the user to select upon clicking.
+ */
+app.directive('selectOnClick', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            element.on('click', function () {
+                var range = document.createRange();
+                range.selectNode(element[0]);
+                window.getSelection().addRange(range);
+            });
         }
     };
-});//loremSvc
-
-app.factory('words', function () {
-    return {
-        nouns: [
-            'ScrumMaster',
-            'acceptance criteria',
-            'acceptance test',
-            'acceptance testing',
-            'agile development practices',
-            'agile manifesto',
-            'agile project management',
-            'agile software development',
-            'alignment',
-            'application lifecycle management',
-            'application',
-            'automation',
-            'backlog grooming',
-            'backlog item effort',
-            'backlog item',
-            'backlog',
-            'big visible charts',
-            'blocker',
-            'bottleneck',
-            'branch',
-            'branching',
-            'breaking the build',
-            'bug',
-            'build - measure - learn',
-            'build process',
-            'burndown chart',
-            'burnup chart',
-            'business alignment',
-            'business value',
-            'certified ScrumMaster',
-            'chicken',
-            'code smell',
-            'collaboration',
-            'colocation',
-            'committment',
-            'complexity',
-            'continuous integration',
-            'criteria',
-            'cross-functional team',
-            'customer',
-            'cycle time',
-            'daily scrum',
-            'daily standup',
-            'deadline',
-            'definition of done',
-            'design pattern',
-            'distributed development team',
-            'documentation',
-            'domain model',
-            'downward trend',
-            'emergence',
-            'empiricism',
-            'employee',
-            'epic',
-            'error',
-            'estimation',
-            'extreme programming (XP)',
-            'fail-fast',
-            'feature',
-            'feedback',
-            'fibonacci sequence',
-            'flow',
-            'impediment',
-            'inspect and adapt',
-            'interaction',
-            'interface',
-            'iteration',
-            'kanban',
-            'lean software development',
-            'level of effort',
-            'lifecycle',
-            'meeting',
-            'methodology',
-            'metrics',
-            'minimum marketable features',
-            'minimum viable product (MVP)',
-            'model',
-            'pace',
-            'pair programming',
-            'parallel development',
-            'pattern',
-            'pig',
-            'pirate metrics',
-            'planning game',
-            'planning poker',
-            'product backlog',
-            'product owner',
-            'product vision',
-            'product',
-            'production release',
-            'project',
-            'pull request (PR)',
-            'refactoring',
-            'relationships',
-            'relative size',
-            'release plan',
-            'release planning',
-            'requirements',
-            'retrospective',
-            'schedule',
-            'scope',
-            'scrum team',
-            'scrum',
-            'self-organization',
-            'sequence',
-            'simplicity',
-            'spike',
-            'sprint backlog',
-            'sprint planning meeting',
-            'sprint review',
-            'sprint review',
-            'sprint',
-            'stakeholder',
-            'standards',
-            'standup meeting',
-            'steady trend',
-            'story points',
-            'story',
-            'task board',
-            'task',
-            'team',
-            'technical debt',
-            'test automation',
-            'test-driven development',
-            'timebox',
-            'unit testing',
-            'upward trend',
-            'user story',
-            'vanity metric',
-            'velocity',
-            'voice of the customer (VOC)',
-            'wiki',
-            'work in progress (WIP)',
-        ]
-    };
-});//words
+});//selectOnClick

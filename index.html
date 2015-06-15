@@ -2,22 +2,51 @@
 <html lang="en" ng-app="agileipsum">
   <head>
     <title>Agile-ipsum Generator</title>
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="app.css" />
+
+    <script src="bower_components/handlebars/handlebars.min.js"></script>
+    <script src="bower_components/lodash/lodash.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/inflection/inflection.min.js"></script>
     <script src="bower_components/ngInflection/dist/ngInflection.min.js"></script>
-    <!--script src="bower_components/lodash/lodash.min.js"></script-->
     <script src="bower_components/chance/chance.js"></script>
     <script src="app.js"></script>
   </head>
   <body ng-controller="loremCtrl">
-    <p>
-      <label>Number of paragraphs:</label>
-      <input type="range" min="1" max="10" ng-model="numParagraphs" />
-      {{numParagraphs}}
-    </p>
-    <p>
-      <button ng-click="generateIpsum()">Build</button>
-    </p>
-    <p ng-repeat="paragraph in paragraphs">{{paragraph}}</p>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1">
+          <div class="row text-center">
+            <h1>
+              Agile-Ipsum Generator
+              <small>v0.2.0</small>
+            </h1>
+            <p>
+              Generate some fancy Agile verbiage for your filler-text pleasure.
+            </p>
+          </div>
+          <div class="row text-center">
+            <form class="form-inline ">
+              <div class="input-group">
+                <div class="input-group-addon">Paragraphs</div>
+                <input type="number" min="1" max="5" ng-model="numParagraphs" class="form-control" />
+              </div>
+              <button
+                ng-disabled="!ready"
+                ng-click="generateIpsum()"
+                class="btn btn-primary">Generate</button>
+            </form>
+          </div>
+          <div class="row" ng-if="paragraphs.length > 0">
+            <div class="ipsum well" select-on-click>
+              <p ng-repeat="paragraph in paragraphs">{{paragraph}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

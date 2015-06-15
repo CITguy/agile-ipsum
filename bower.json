@@ -21,7 +21,8 @@
   "dependencies": {
     "angular": "~1.4.0",
     "ngInflection": "~1.1.10",
-    "lodash": "~3.9.3",
-    "chance": "~0.7.5"
+    "chance": "~0.7.5",
+    "handlebars": "~3.0.3",
+    "bootstrap": "~3.3.4"
   }
 }
