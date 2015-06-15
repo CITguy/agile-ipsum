@@ -43,7 +43,7 @@ app.controller('loremCtrl', function ($scope, $http, Lorem) {
     };
 
     $scope.$watch('vocabulary', function (newVal) {
-        var file = 'vocab-' + newVal + '.json';
+        var file = 'vocab/' + newVal + '.json';
         $http.get(file)
             .success(function (response) {
                 reset();
