@@ -163,7 +163,6 @@
     "epic",
     "error",
     "estimation",
-    "fail-fast",
     "feature",
     "feedback",
     "flow",
@@ -274,7 +273,7 @@
   ],
   "phrase": [
     "As a user, I should be able to {{verb}} the {{adjective}} {{noun}} so that I can {{verb}} the {{adjective}} {{abbreviation}} {{pluralNoun}} {{preposition}} the {{adjective}} {{pluralNoun}}.",
-    "Given {{adjective}} {{noun}}, {{adverb}} {{ingverb}} the {{adjective}} {{noun}} {{preposition}} the {{adjective}} {{noun}} will {{adverb}} {{verb}} the {{adjective}} {{pluralNoun}}.",
+    "Given {{adjective}} {{pluralNoun}}, {{adverb}} {{ingverb}} the {{adjective}} {{noun}} {{preposition}} the {{adjective}} {{noun}} will {{adverb}} {{verb}} the {{adjective}} {{noun}}.",
     "{{ingverb}} the {{pluralNoun}} should allow our {{noun}} to {{verb}} the {{adjective}} {{noun}} {{preposition}} the {{noun}}.",
     "It was discovered that by {{adverb}} {{ingverb}} the {{abbreviation}} {{pluralNoun}}, we can {{verb}} the {{adjective}} {{abbreviation}} {{noun}} {{preposition}} the {{adjective}} {{noun}}.",
     "We must {{adverb}} {{verb}} the {{adjective}} {{abbreviation}} {{noun}}!",
