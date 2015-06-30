@@ -15,10 +15,6 @@ app.controller('loremCtrl', function ($scope, $http, Lorem) {
     var lorem;
     $scope.ready = false;
     $scope.vocabulary = 'agile';
-    $scope.vocabs = [
-        'agile',
-        'bangbiz'
-    ];
 
     var reset = function () {
         $scope.numParagraphs = 1;
@@ -60,6 +56,7 @@ app.service('Lorem', function ($filter, $interpolate) {
     return function (vocab) {
         var VocabGenerator = {
             get noun() { return vocab.noun.sample(); },
+            get pluralNoun() { return vocab.pluralNoun.sample(); },
             get verb() { return vocab.verb.sample(); },
             get adjective() { return vocab.adjective.sample(); },
             get adverb() { return vocab.adverb.sample(); },
