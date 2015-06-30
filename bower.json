@@ -1,6 +1,6 @@
 {
   "name": "agile-ipsum",
-  "version": "0.0.0",
+  "version": "0.3.0",
   "authors": [
     "Ryan Johnson <rhino.citguy@gmail.com>"
   ],
@@ -22,7 +22,6 @@
     "angular": "~1.4.0",
     "ngInflection": "~1.1.10",
     "chance": "~0.7.5",
-    "handlebars": "~3.0.3",
     "bootstrap": "~3.3.4"
   }
 }

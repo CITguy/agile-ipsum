@@ -20,23 +20,6 @@ app.controller('loremCtrl', function ($scope, $http, Lorem) {
         'bangbiz'
     ];
 
-    // TEST
-    var tmpl = "NOUN: {{noun}}, VERB: {{verb}}";
-    var scp = {
-        noun: "Ryan",
-        verb: "rocks"
-    };
-    var scp2 = {
-      get noun() {
-        return "NOUN";
-      },
-      get verb() {
-        return "HERRO";
-      }
-    };
-    $scope.compiled = Handlebars.compile(tmpl)(scp2);
-    //END:TEST
-
     var reset = function () {
         $scope.numParagraphs = 1;
         $scope.paragraphs = [];
@@ -73,7 +56,7 @@ app.controller('loremCtrl', function ($scope, $http, Lorem) {
  * @param {Object.noun} vocabulary - object to instantiate Lorem instance.
  * @return {Function} constructor function for new Lorem object
  */
-app.service('Lorem', function ($filter) {
+app.service('Lorem', function ($filter, $interpolate) {
     return function (vocab) {
         var VocabGenerator = {
             get noun() { return vocab.noun.sample(); },
@@ -86,7 +69,7 @@ app.service('Lorem', function ($filter) {
         };
 
         var _phrase = function () {
-            var phrase = Handlebars.compile(vocab.phrase.sample())(VocabGenerator);
+            var phrase = $interpolate(vocab.phrase.sample())(VocabGenerator);
             // Ensure first letter is capitalized
             phrase = phrase.replace(/^[a-z]/, function (c) { return c.toUpperCase(); });
             return phrase;
