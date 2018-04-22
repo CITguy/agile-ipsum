@@ -11,18 +11,19 @@ Array.prototype.sample = function () {
 
 var app = angular.module('agileipsum', ['ngInflection']);
 
-app.controller('loremCtrl', function ($scope, $http, Lorem) {
+app.controller('loremCtrl', function ($scope, $http, Lorem, Vocabs) {
     var lorem;
     $scope.ready = false;
-    $scope.vocabulary = 'agile';
+    $scope.vocabulary = Vocabs[0];
+    $scope.vocabs = Vocabs;
 
     var reset = function () {
         $scope.numParagraphs = 1;
         $scope.paragraphs = [];
     };
 
-    $scope.$watch('vocabulary', function (newVal) {
-        var file = 'vocab/' + newVal + '.json';
+    $scope.$watch('vocabulary', function (vocab) {
+        var file = 'vocab/' + vocab.src;
         $http.get(file)
             .success(function (response) {
                 reset();
@@ -48,6 +49,13 @@ app.controller('loremCtrl', function ($scope, $http, Lorem) {
     reset();
 });
 
+app.service('Vocabs', function () {
+    return [
+        { name: 'Agile', src: 'agile.json' },
+        { name: 'Auto Mechanic', src: 'auto-mechanic.json' },
+    ];
+});
+
 /**
  * @param {Object.noun} vocabulary - object to instantiate Lorem instance.
  * @return {Function} constructor function for new Lorem object
@@ -62,7 +70,7 @@ app.service('Lorem', function ($filter, $interpolate) {
             get adverb() { return vocab.adverb.sample(); },
             get abbreviation() { return vocab.abbreviation.sample(); },
             get ingverb() { return vocab.ingverb.sample(); },
-            get preposition() { return vocab.preposition.sample(); }
+            get preposition() { return vocab.preposition.sample(); },
         };
 
         var _phrase = function () {
